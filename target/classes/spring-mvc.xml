@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 启动自动扫描 -->
+	<context:component-scan base-package="com.wang.*" />
+
+	<!-- 注册MVC注解驱动 -->
+	<mvc:annotation-driven />
+
+	<!-- 静态资源可访问的设置方式 
+	<mvc:default-servlet-handler /> -->
+	
+	<mvc:resources mapping="/**" location="/resources" />
+
+	<!-- 配置拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+		   <mvc:mapping path="/*"/>
+		   <bean id="sessionCheck" class="com.wang.inteceptor.SessionCheckInteceptor" >
+		       <property name="excludeUrls">
+                     <list>
+                         <value>/ssm/index</value>
+                         <value>/ssm/login</value>
+                         <value>/ssm</value>
+                     </list>
+                 </property>
+		   </bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!--Aop切面编程的配置 -->
+	<aop:aspectj-autoproxy expose-proxy="true"></aop:aspectj-autoproxy>
+	<bean id="logAopAction" class="com.wang.aop.LogAopAction"></bean>
+
+	<!-- 配置视图解析器，可以显式设置，也可以不设置，不设置会依据SpringMVC的默认设置 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+</beans>
